@@ -7,7 +7,7 @@ export default {
     dropdownItemSwitchPassword: '密码修改',
     dropdownItemSwitchDepart: '切换部门',
     dropdownItemRefreshCache: '刷新缓存',
-    dropdownItemSwitchAccount: '账户设置',
+    dropdownItemSwitchAccount: '个人中心',
 
     // tooltip
     tooltipErrorLog: '错误日志',

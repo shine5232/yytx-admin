@@ -3,52 +3,148 @@
     <LoginFormTitle class="enter-x" />
     <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef">
       <FormItem name="account" class="enter-x">
-        <Input class="fix-auto-fill" size="large" v-model:value="formData.account" :placeholder="t('sys.login.userName')" />
-      </FormItem>
-      <FormItem name="mobile" class="enter-x">
-        <Input size="large" v-model:value="formData.mobile" :placeholder="t('sys.login.mobile')" class="fix-auto-fill" />
-      </FormItem>
-      <FormItem name="sms" class="enter-x">
-        <CountdownInput size="large" class="fix-auto-fill" v-model:value="formData.sms" :placeholder="t('sys.login.smsCode')" :sendCodeApi="sendCodeApi" />
+        <Input class="fix-auto-fill inputs" allowClear v-model:value="formData.account"
+          :placeholder="t('sys.login.userName')">
+        <template #prefix>
+          <UserOutlined style="color: rgba(0, 0, 0, 0.25)" />
+        </template>
+        </Input>
       </FormItem>
       <FormItem name="password" class="enter-x">
-        <StrengthMeter size="large" v-model:value="formData.password" :placeholder="t('sys.login.password')" />
+        <StrengthMeter class="inputs" allowClear v-model:value="formData.password" :placeholder="t('sys.login.password')">
+          <template #prefix>
+            <LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
+          </template>
+        </StrengthMeter>
       </FormItem>
       <FormItem name="confirmPassword" class="enter-x">
-        <InputPassword size="large" visibilityToggle v-model:value="formData.confirmPassword" :placeholder="t('sys.login.confirmPassword')" />
+        <InputPassword class="inputs"  visibilityToggle allowClear v-model:value="formData.confirmPassword"
+          :placeholder="t('sys.login.confirmPassword')">
+          <template #prefix>
+            <LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
+          </template>
+        </InputPassword>
       </FormItem>
-
+      <FormItem name="mobile" class="enter-x">
+        <Input v-model:value="formData.mobile" allowClear :placeholder="t('sys.login.mobile')"
+          class="fix-auto-fill inputs" />
+      </FormItem>
+      <FormItem name="sms" class="enter-x">
+        <CountdownInput  class="fix-auto-fill" v-model:value="formData.sms"
+          :placeholder="t('sys.login.smsCode')" :sendCodeApi="sendCodeApi" />
+      </FormItem>
+      <ARow class="enter-x" :gutter="16">
+        <ACol :span="12">
+          <FormItem name="company">
+            <Input v-model:value="formData.company" allowClear :placeholder="t('sys.login.companyPlaceholder')"
+              class="fix-auto-fill inputs"/>
+          </FormItem>
+        </ACol>
+        <ACol :span="12">
+          <FormItem name="contacter">
+            <Input v-model:value="formData.contacter" allowClear :placeholder="t('sys.login.contacterPlaceholder')"
+              class="fix-auto-fill inputs" />
+          </FormItem>
+        </ACol>
+        <ACol :span="12">
+          <FormItem name="wechat">
+            <Input v-model:value="formData.wechat" allowClear :placeholder="t('sys.login.wechatPlaceholder')"
+              class="fix-auto-fill inputs" />
+          </FormItem>
+        </ACol>
+        <ACol :span="12">
+          <FormItem name="email">
+            <Input v-model:value="formData.email" allowClear :placeholder="t('sys.login.emailPlaceholder')"
+              class="fix-auto-fill inputs" />
+          </FormItem>
+        </ACol>
+        <ACol :span="12">
+          <FormItem name="userType">
+            <RadioGroup v-model:value="formData.userType">
+              <Radio :value="1">客户</Radio>
+              <Radio :value="2">方案商</Radio>
+            </RadioGroup>
+          </FormItem>
+        </ACol>
+      </ARow>
       <FormItem class="enter-x" name="policy">
         <!-- No logic, you need to deal with it yourself -->
         <Checkbox v-model:checked="formData.policy" size="small">
           {{ t('sys.login.policy') }}
         </Checkbox>
+        <span class="span url"><a href="">宇音天下软件授权服务协议</a></span>
+        <span class="span"> 与 </span>
+        <span class="span url"><a href="">隐私政策</a></span>
       </FormItem>
 
-      <Button type="primary" class="enter-x" size="large" block @click="handleRegister" :loading="loading">
+      <Button type="primary" class="enter-x"  block @click="handleRegister" :loading="loading">
         {{ t('sys.login.registerButton') }}
       </Button>
-      <Button size="large" block class="mt-4 enter-x" @click="handleBackLogin">
+      <Button  block class="mt-4 enter-x" @click="handleBackLogin">
         {{ t('sys.login.backSignIn') }}
       </Button>
     </Form>
   </template>
 </template>
 <script lang="ts" setup>
-  import { reactive, ref, unref, computed, toRaw } from 'vue';
+  import {
+    reactive,
+    ref,
+    unref,
+    computed,
+    toRaw
+  } from 'vue';
   import LoginFormTitle from './LoginFormTitle.vue';
-  import { Form, Input, Button, Checkbox } from 'ant-design-vue';
-  import { StrengthMeter } from '/@/components/StrengthMeter';
-  import { CountdownInput } from '/@/components/CountDown';
-  import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { useLoginState, useFormRules, useFormValid, LoginStateEnum, SmsEnum } from './useLogin';
-  import { register, getCaptcha } from '/@/api/sys/user';
+  import {
+    Form,
+    Input,
+    Button,
+    Checkbox,
+    RadioGroup,
+    Radio
+  } from 'ant-design-vue';
+  import {
+    StrengthMeter
+  } from '/@/components/StrengthMeter';
+  import {
+    CountdownInput
+  } from '/@/components/CountDown';
+  import {
+    useI18n
+  } from '/@/hooks/web/useI18n';
+  import {
+    useMessage
+  } from '/@/hooks/web/useMessage';
+  import {
+    useLoginState,
+    useFormRules,
+    useFormValid,
+    LoginStateEnum,
+    SmsEnum
+  } from './useLogin';
+  import {
+    register,
+    getCaptcha
+  } from '/@/api/sys/user';
+
+  import {
+    UserOutlined,
+    LockOutlined,
+    SmileOutlined
+  } from '@ant-design/icons-vue';
   const FormItem = Form.Item;
   const InputPassword = Input.Password;
-  const { t } = useI18n();
-  const { handleBackLogin, getLoginState } = useLoginState();
-  const { notification, createErrorModal } = useMessage();
+  const {
+    t
+  } = useI18n();
+  const {
+    handleBackLogin,
+    getLoginState
+  } = useLoginState();
+  const {
+    notification,
+    createErrorModal
+  } = useMessage();
   const formRef = ref();
   const loading = ref(false);
   const formData = reactive({
@@ -58,9 +154,18 @@
     mobile: '',
     sms: '',
     policy: false,
+    company:'',
+    contacter:'',
+    wechat:'',
+    email:'',
+    userType:1,
   });
-  const { getFormRules } = useFormRules(formData);
-  const { validForm } = useFormValid(formRef);
+  const {
+    getFormRules
+  } = useFormRules(formData);
+  const {
+    validForm
+  } = useFormValid(formRef);
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.REGISTER);
   /**
    * 注册
@@ -103,6 +208,19 @@
   }
   //发送验证码的函数
   function sendCodeApi() {
-    return getCaptcha({ mobile: formData.mobile, smsmode: SmsEnum.REGISTER });
+    return getCaptcha({
+      mobile: formData.mobile,
+      smsmode: SmsEnum.REGISTER
+    });
   }
 </script>
+<style>
+  /* .inputs{
+    min-width: initial !important;
+    width: 100%;
+  } */
+  .jeecg-login input:not([type='checkbox']){
+    min-width: initial !important;
+    width: 100%;
+  }
+</style>

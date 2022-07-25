@@ -50,16 +50,22 @@ export function useFormRules(formData?: Recordable) {
 
   const getAccountFormRule = computed(() => createRule(t('sys.login.accountPlaceholder')));
   const getPasswordFormRule = computed(() => createRule(t('sys.login.passwordPlaceholder')));
+  const getInputCodeFormRule = computed(() => createRule(t('sys.login.inputCodePlaceholder')));
   const getSmsFormRule = computed(() => createRule(t('sys.login.smsPlaceholder')));
   const getMobileFormRule = computed(() => createRule(t('sys.login.mobilePlaceholder')));
-
+  const getCompanyFormRule = computed(() => createRule(t('sys.login.companyPlaceholder')));
+  const getContacterFormRule = computed(() => createRule(t('sys.login.contacterPlaceholder')));
+  const getWechatFormRule = computed(() => createRule(t('sys.login.wechatPlaceholder')));
+  const getEmailFormRule = computed(() => createRule(t('sys.login.emailPlaceholder')));
   const getRegisterAccountRule = computed(() => createRegisterAccountRule('account'));
   const getRegisterMobileRule = computed(() => createRegisterAccountRule('mobile'));
 
   const validatePolicy = async (_: RuleObject, value: boolean) => {
     return !value ? Promise.reject(t('sys.login.policyPlaceholder')) : Promise.resolve();
   };
-
+  const validateAccepted = async (_: RuleObject, value: boolean)=>{
+    return !value ? Promise.reject(t('sys.login.acceptedPlaceholder')) : Promise.resolve();
+  };
   const validateConfirmPassword = (password: string) => {
     return async (_: RuleObject, value: string) => {
       if (!value) {
@@ -75,16 +81,22 @@ export function useFormRules(formData?: Recordable) {
   const getFormRules = computed((): { [k: string]: ValidationRule | ValidationRule[] } => {
     const accountFormRule = unref(getAccountFormRule);
     const passwordFormRule = unref(getPasswordFormRule);
+    const inputCodeFormRule = unref(getInputCodeFormRule);
     const smsFormRule = unref(getSmsFormRule);
     const mobileFormRule = unref(getMobileFormRule);
 
     const registerAccountRule = unref(getRegisterAccountRule);
     const registerMobileRule = unref(getRegisterMobileRule);
-
+    const companyFormRule = unref(getCompanyFormRule);
+    const contacterFormRule = unref(getContacterFormRule);
+    const wechatFormRule = unref(getWechatFormRule);
+    const emailFormRule = unref(getEmailFormRule);
+    
     const mobileRule = {
       sms: smsFormRule,
       mobile: mobileFormRule,
     };
+    console.log('currentState',unref(currentState));
     switch (unref(currentState)) {
       // register form rules
       case LoginStateEnum.REGISTER:
@@ -95,6 +107,10 @@ export function useFormRules(formData?: Recordable) {
           sms: smsFormRule,
           confirmPassword: [{ validator: validateConfirmPassword(formData?.password), trigger: 'change' }],
           policy: [{ validator: validatePolicy, trigger: 'change' }],
+          company:companyFormRule,
+          contacter:contacterFormRule,
+          wechat:wechatFormRule,
+          email:emailFormRule,
         };
 
       // reset password form rules
@@ -114,6 +130,8 @@ export function useFormRules(formData?: Recordable) {
         return {
           account: accountFormRule,
           password: passwordFormRule,
+          inputCode:inputCodeFormRule,
+          accepted:[{ validator: validateAccepted, trigger: 'change' }],
         };
     }
   });

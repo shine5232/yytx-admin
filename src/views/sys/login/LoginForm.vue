@@ -1,33 +1,50 @@
 <template>
   <LoginFormTitle v-show="getShow" class="enter-x" />
-  <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef" v-show="getShow" @keypress.enter="handleLogin">
+  <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef" v-show="getShow"
+    @keypress.enter="handleLogin">
     <FormItem name="account" class="enter-x">
-      <Input size="large" v-model:value="formData.account" :placeholder="t('sys.login.userName')" class="fix-auto-fill" />
+      <Input  v-model:value="formData.account" :placeholder="t('sys.login.userName')" class="fix-auto-fill">
+      <template #prefix>
+        <UserOutlined style="color: rgba(0, 0, 0, 0.25)" />
+      </template>
+      </Input>
     </FormItem>
     <FormItem name="password" class="enter-x">
-      <InputPassword size="large" visibilityToggle v-model:value="formData.password" :placeholder="t('sys.login.password')" />
+      <InputPassword  visibilityToggle v-model:value="formData.password"
+        :placeholder="t('sys.login.password')">
+        <template #prefix>
+          <LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
+        </template>
+      </InputPassword>
     </FormItem>
 
     <!--验证码-->
     <ARow class="enter-x">
-      <ACol :span="12">
+      <ACol :span="14">
         <FormItem name="inputCode" class="enter-x">
-          <Input size="large" v-model:value="formData.inputCode" :placeholder="t('sys.login.inputCode')" style="min-width: 100px" />
+          <Input  v-model:value="formData.inputCode" :placeholder="t('sys.login.inputCode')"
+            style="min-width: 100px">
+          <template #prefix>
+            <SmileOutlined style="color: rgba(0, 0, 0, 0.25)" />
+          </template>
+          </Input>
         </FormItem>
       </ACol>
       <ACol :span="8">
         <FormItem :style="{ 'text-align': 'right', 'margin-left': '20px' }" class="enter-x">
-          <img v-if="randCodeData.requestCodeSuccess" style="margin-top: 2px; max-width: initial" :src="randCodeData.randCodeImage" @click="handleChangeCheckCode" />
-          <img v-else style="margin-top: 2px; max-width: initial" src="../../../assets/images/checkcode.png" @click="handleChangeCheckCode" />
+          <img v-if="randCodeData.requestCodeSuccess" style="margin-top: 2px; max-width: initial"
+            :src="randCodeData.randCodeImage" @click="handleChangeCheckCode" />
+          <img v-else style="margin-top: 2px; max-width: initial" src="../../../assets/images/checkcode.png"
+            @click="handleChangeCheckCode" />
         </FormItem>
       </ACol>
     </ARow>
 
     <ARow class="enter-x">
       <ACol :span="12">
-        <FormItem>
+        <FormItem name="rememberMe">
           <!-- No logic, you need to deal with it yourself -->
-          <Checkbox v-model:checked="rememberMe" size="small">
+          <Checkbox v-model:checked="formData.rememberMe" size="small">
             {{ t('sys.login.rememberMe') }}
           </Checkbox>
         </FormItem>
@@ -43,14 +60,22 @@
     </ARow>
 
     <FormItem class="enter-x">
-      <Button type="primary" size="large" block @click="handleLogin" :loading="loading">
+      <Button type="primary"  block @click="handleLogin" :loading="loading">
         {{ t('sys.login.loginButton') }}
       </Button>
-      <!-- <Button size="large" class="mt-4 enter-x" block @click="handleRegister">
+      <!-- <Button  class="mt-4 enter-x" block @click="handleRegister">
               {{ t('sys.login.registerButton') }}
             </Button> -->
     </FormItem>
     <ARow class="enter-x">
+      <ACol :md="24" :xs="24">
+        <FormItem class="enter-x" name="accepted">
+          <Checkbox v-model:checked="formData.accepted" size="small">{{ t('sys.login.accepted') }}</Checkbox>
+          <span class="span url"><a href="">宇音天下软件授权服务协议</a></span>
+          <span class="span"> 与 </span>
+          <span class="span url"><a href="">隐私政策</a></span>
+        </FormItem>
+      </ACol>
       <ACol :md="8" :xs="24">
         <Button block @click="setLoginState(LoginStateEnum.MOBILE)">
           {{ t('sys.login.mobileSignInFormTitle') }}
@@ -67,33 +92,82 @@
         </Button>
       </ACol>
     </ARow>
-
+    <!-- 
     <Divider class="enter-x">{{ t('sys.login.otherSignIn') }}</Divider>
 
     <div class="flex justify-evenly enter-x" :class="`${prefixCls}-sign-in-way`">
-      <a @click="onThirdLogin('github')" title="github"><GithubFilled /></a>
-      <a @click="onThirdLogin('wechat_enterprise')" title="企业微信"> <icon-font class="item-icon" type="icon-qiyeweixin3" /></a>
-      <a @click="onThirdLogin('dingtalk')" title="钉钉"><DingtalkCircleFilled /></a>
-      <a @click="onThirdLogin('wechat_open')" title="微信"><WechatFilled /></a>
-    </div>
+      <a @click="onThirdLogin('github')" title="github">
+        <GithubFilled />
+      </a>
+      <a @click="onThirdLogin('wechat_enterprise')" title="企业微信">
+        <icon-font class="item-icon" type="icon-qiyeweixin3" />
+      </a>
+      <a @click="onThirdLogin('dingtalk')" title="钉钉">
+        <DingtalkCircleFilled />
+      </a>
+      <a @click="onThirdLogin('wechat_open')" title="微信">
+        <WechatFilled />
+      </a>
+    </div> -->
   </Form>
   <!-- 第三方登录相关弹框 -->
   <ThirdModal ref="thirdModalRef"></ThirdModal>
 </template>
 <script lang="ts" setup>
-  import { reactive, ref, toRaw, unref, computed, onMounted } from 'vue';
+  import {
+    reactive,
+    ref,
+    toRaw,
+    unref,
+    computed,
+    onMounted
+  } from 'vue';
 
-  import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'ant-design-vue';
-  import { GithubFilled, WechatFilled, DingtalkCircleFilled, QuestionCircleFilled, createFromIconfontCN } from '@ant-design/icons-vue';
+  import {
+    Checkbox,
+    Form,
+    Input,
+    Row,
+    Col,
+    Button,
+    Divider
+  } from 'ant-design-vue';
+  import {
+    UserOutlined,
+    LockOutlined,
+    SmileOutlined
+  } from '@ant-design/icons-vue';
+  import {
+    GithubFilled,
+    WechatFilled,
+    DingtalkCircleFilled,
+    QuestionCircleFilled,
+    createFromIconfontCN
+  } from '@ant-design/icons-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
   import ThirdModal from './ThirdModal.vue';
-  import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import {
+    useI18n
+  } from '/@/hooks/web/useI18n';
+  import {
+    useMessage
+  } from '/@/hooks/web/useMessage';
 
-  import { useUserStore } from '/@/store/modules/user';
-  import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { getCodeInfo } from '/@/api/sys/user';
+  import {
+    useUserStore
+  } from '/@/store/modules/user';
+  import {
+    LoginStateEnum,
+    useLoginState,
+    useFormRules,
+    useFormValid
+  } from './useLogin';
+  import {
+    useDesign
+  } from '/@/hooks/web/useDesign';
+  import {
+    getCodeInfo
+  } from '/@/api/sys/user';
   //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col;
@@ -103,23 +177,37 @@
   const IconFont = createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_2316098_umqusozousr.js',
   });
-  const { t } = useI18n();
-  const { notification, createErrorModal } = useMessage();
-  const { prefixCls } = useDesign('login');
+  const {
+    t
+  } = useI18n();
+  const {
+    notification,
+    createErrorModal
+  } = useMessage();
+  const {
+    prefixCls
+  } = useDesign('login');
   const userStore = useUserStore();
 
-  const { setLoginState, getLoginState } = useLoginState();
-  const { getFormRules } = useFormRules();
+  const {
+    setLoginState,
+    getLoginState
+  } = useLoginState();
+  const {
+    getFormRules
+  } = useFormRules();
 
   const formRef = ref();
   const thirdModalRef = ref();
   const loading = ref(false);
-  const rememberMe = ref(false);
-
+  const rememberMe = ref(true);
+  const accepted = ref(false);
   const formData = reactive({
-    account: 'admin',
-    password: '123456',
+    account: '',
+    password: '',
     inputCode: '',
+    rememberMe: true,
+    accepted: false
   });
   const randCodeData = reactive({
     randCodeImage: '',
@@ -127,7 +215,9 @@
     checkKey: null,
   });
 
-  const { validForm } = useFormValid(formRef);
+  const {
+    validForm
+  } = useFormValid(formRef);
 
   //onKeyStroke('Enter', handleLogin);
 
@@ -138,7 +228,9 @@
     if (!data) return;
     try {
       loading.value = true;
-      const { userInfo } = await userStore.login(
+      const {
+        userInfo
+      } = await userStore.login(
         toRaw({
           password: data.password,
           username: data.account,
@@ -167,6 +259,7 @@
       //update-end-author:taoyan date:2022-5-3 for: issues/41 登录页面，当输入验证码错误时，验证码图片要刷新一下，而不是保持旧的验证码图片不变
     }
   }
+
   function handleChangeCheckCode() {
     formData.inputCode = '';
     //TODO 兼容mock和接口，暂时这样处理
@@ -189,3 +282,8 @@
     handleChangeCheckCode();
   });
 </script>
+<style>
+  #inputCode{
+    min-width: 100px;
+  }
+</style>

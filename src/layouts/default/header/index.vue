@@ -27,7 +27,7 @@
 
       <LockScreen v-if="getUseLockPage" />
 
-      <AppLocalePicker v-if="getShowLocalePicker" :reload="true" :showText="false" :class="`${prefixCls}-action__item`" />
+      <!-- <AppLocalePicker v-if="getShowLocalePicker" :reload="true" :showText="false" :class="`${prefixCls}-action__item`" /> -->
 
       <UserDropDown :theme="getHeaderTheme" />
 
