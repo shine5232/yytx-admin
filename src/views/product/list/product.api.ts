@@ -2,14 +2,14 @@ import { defHttp } from '/@/utils/http/axios';
 import { Modal } from 'ant-design-vue';
 
 enum Api {
-  list = '/sys/user/list',
-  save = '/sys/user/add',
-  edit = '/sys/user/edit',
+  list = '/authorize/product/list',
+  save = '/authorize/product/add',
+  edit = '/authorize/product/edit',
   agentSave = '/sys/sysUserAgent/add',
   agentEdit = '/sys/sysUserAgent/edit',
   getUserRole = '/sys/user/queryUserRole',
   duplicateCheck = '/sys/duplicate/check',
-  deleteUser = '/sys/user/delete',
+  deleteUser = '/authorize/product/delete',
   deleteBatch = '/sys/user/deleteBatch',
   importExcel = '/sys/user/importExcel',
   exportXls = '/sys/user/exportXls',

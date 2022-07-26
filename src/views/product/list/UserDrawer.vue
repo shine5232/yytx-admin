@@ -1,14 +1,15 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" :width="adaptiveWidth" @ok="handleSubmit" :showFooter="showFooter" destroyOnClose>
+    <div>公司名称：[小米公司]</div>
     <BasicForm @register="registerForm" />
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
   import { defineComponent, ref, computed, unref, useAttrs } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
-  import { formSchema } from './user.data';
+  import { formSchema } from './product.data';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { saveOrUpdateUser, getUserRoles, getUserDepartList } from './user.api';
+  import { saveOrUpdateUser, getUserRoles, getUserDepartList } from './product.api';
   import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
   // 声明Emits
   const emit = defineEmits(['success', 'register']);
@@ -101,7 +102,7 @@
     //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
   });
   //获取标题
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增用户' : '编辑用户'));
+  const getTitle = computed(() => (!unref(isUpdate) ? '新增产品' : '编辑产品'));
   const { adaptiveWidth } = useDrawerAdaptiveWidth();
 
   //提交事件
