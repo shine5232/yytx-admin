@@ -1,14 +1,14 @@
 <template>
-  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" :width="adaptiveWidth" @ok="handleSubmit" :showFooter="showFooter" destroyOnClose>
-    <div>公司名称：[小米公司]</div>
-    <BasicForm @register="registerForm" />
-  </BasicDrawer>
+    <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" :width="adaptiveWidth" @ok="handleSubmit" :showFooter="showFooter" destroyOnClose>
+        <div class="titles">公司名称：[小米公司]</div>
+        <BasicForm @register="registerForm" />
+    </BasicModal>
 </template>
 <script lang="ts" setup>
   import { defineComponent, ref, computed, unref, useAttrs } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { formSchema } from './product.data';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+  import { BasicModal, useModalInner } from '/@/components/Modal';
   import { saveOrUpdateUser, getUserRoles, getUserDepartList } from './product.api';
   import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
   // 声明Emits
@@ -26,10 +26,10 @@
   // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
   const showFooter = ref(true);
   //表单赋值
-  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
     showFooter.value = data?.showFooter ?? true;
-    setDrawerProps({ confirmLoading: false, showFooter: showFooter.value });
+    setModalProps({ confirmLoading: false, showFooter: showFooter.value });
     isUpdate.value = !!data?.isUpdate;
     if (unref(isUpdate)) {
       rowId.value = data.record.id;
@@ -109,16 +109,21 @@
   async function handleSubmit() {
     try {
       let values = await validate();
-      setDrawerProps({ confirmLoading: true });
+      setModalProps({ confirmLoading: true });
       values.userIdentity === 1 && (values.departIds = '');
       //提交表单
       await saveOrUpdateUser(values, unref(isUpdate));
       //关闭弹窗
-      closeDrawer();
+      closeModal();
       //刷新列表
       emit('success');
     } finally {
-      setDrawerProps({ confirmLoading: false });
+      setModalProps({ confirmLoading: false });
     }
   }
 </script>
+<style lang="less" scoped>
+    .titles{
+        padding: 10px 20px;
+    }
+</style>
