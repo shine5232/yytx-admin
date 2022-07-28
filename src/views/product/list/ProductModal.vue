@@ -1,6 +1,6 @@
 <template>
     <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" :width="adaptiveWidth" @ok="handleSubmit" :showFooter="showFooter" destroyOnClose>
-        <div class="titles">公司名称：[小米公司]</div>
+        <!-- <div class="titles">公司名称：[小米公司]</div> -->
         <BasicForm @register="registerForm" />
     </BasicModal>
 </template>

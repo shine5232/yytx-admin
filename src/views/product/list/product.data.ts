@@ -130,17 +130,6 @@ export const formSchema: FormSchema[] = [
     show: false,
   },
   {
-    label: '芯片No',
-    field: 'chipNo',
-    component: 'Input',
-    rules: [
-      {
-        required: true,
-        message: '请输入芯片No',
-      },
-    ],
-  },
-  {
     label: '产品名称',
     field: 'name',
     component: 'Input',
@@ -152,14 +141,9 @@ export const formSchema: FormSchema[] = [
     ],
   },
   {
-    label: '状态',
-    field: 'status',
-    component: 'JDictSelectTag',
-    componentProps: {
-      dictCode: 'product_status',
-      placeholder: '请选择状态',
-      stringToNumber: true,
-    },
+    label: '产品描述',
+    field: 'desc',
+    component: 'InputTextArea',
   },
 ];
 
